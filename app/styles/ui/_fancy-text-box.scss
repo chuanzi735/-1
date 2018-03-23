@@ -8,7 +8,7 @@
 
   .fancy-octicon {
     height: var(--text-field-height);
-    padding: var(--spacing-half);
+    padding: var(--spacing-half) var(--spacing-half) var(--spacing-half) 7px;
     border-right: none;
     border-radius: var(--border-radius) 0 0 var(--border-radius);
   }
@@ -16,7 +16,6 @@
   &.focused {
     @include textboxish-focus-styles;
   }
-
   input {
     border-left: none;
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
