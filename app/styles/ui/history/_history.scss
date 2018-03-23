@@ -88,8 +88,12 @@
     display: flex;
     justify-content: flex-end;
 
-    .octicon:last-child {
-      margin-right: 0;
+    .octicon {
+      fill: var(--text-secondary-color);
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
 
