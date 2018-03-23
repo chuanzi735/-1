@@ -87,6 +87,9 @@
   .branch-commit-counter {
     display: flex;
     justify-content: flex-end;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary-color);
+    flex-grow: 1;
 
     .octicon {
       fill: var(--text-secondary-color);
