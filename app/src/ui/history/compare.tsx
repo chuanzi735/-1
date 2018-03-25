@@ -393,6 +393,19 @@ export class CompareSidebar extends React.Component<
 
   private onTextBoxBlurred = () => {
     this.setState({ showFilterList: false })
+
+    let selectedBranch: Branch | null = this.state.selectedBranch
+    if (selectedBranch === null) {
+      return
+    }
+
+    let filterText = this.state.filterText
+
+    if (filterText == "") {
+      this.setState({ selectedBranch: null})
+    } else {
+      this.setState({ filterText: selectedBranch.name })
+    }
   }
 
   private onTextBoxRef = (textbox: TextBox) => {
