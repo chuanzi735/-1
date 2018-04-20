@@ -1,6 +1,9 @@
 import { git } from './core'
 import { Repository } from '../../models/repository'
 
+/** Todo: document what this is */
+export type ConfigName = 'user.name' | 'user.email' | 'merge.tool' | '???'
+
 /** Look up a config value by name in the repository. */
 export function getConfigValue(
   repository: Repository,
@@ -16,7 +19,7 @@ export function getGlobalConfigValue(name: string): Promise<string | null> {
 
 /** Set the local config value by name. */
 export async function setGlobalConfigValue(
-  name: string,
+  name: ConfigName,
   value: string
 ): Promise<void> {
   await git(
