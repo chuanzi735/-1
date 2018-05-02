@@ -46,7 +46,6 @@ interface ICompareSidebarState {
   readonly focusedBranch: Branch | null
   readonly filterText: string
   readonly showBranchList: boolean
-  readonly selectedCommit: Commit | null
 }
 
 /** If we're within this many rows from the bottom, load the next history batch. */
@@ -67,7 +66,6 @@ export class CompareSidebar extends React.Component<
       focusedBranch: null,
       filterText: '',
       showBranchList: false,
-      selectedCommit: null,
     }
   }
 
@@ -169,7 +167,7 @@ export class CompareSidebar extends React.Component<
 
   private renderCommitList() {
     const compareState = this.props.compareState
-    const selectedCommit = this.state.selectedCommit
+    const selectedCommitSHA = compareState.formState.selectedCommitSHA
     const commitSHAs = compareState.commitSHAs
 
     let emptyListMessage: string | JSX.Element
@@ -199,7 +197,7 @@ export class CompareSidebar extends React.Component<
         gitHubRepository={this.props.repository.gitHubRepository}
         commitLookup={this.props.commitLookup}
         commitSHAs={commitSHAs}
-        selectedSHA={selectedCommit !== null ? selectedCommit.sha : null}
+        selectedSHA={selectedCommitSHA}
         gitHubUsers={this.props.gitHubUsers}
         localCommitSHAs={this.props.localCommitSHAs}
         emoji={this.props.emoji}
@@ -392,13 +390,16 @@ export class CompareSidebar extends React.Component<
       commit.sha
     )
 
+    this.props.dispatcher.changeCompareCommitSelection(
+      this.props.repository,
+      commit.sha
+    )
+
     this.loadChangedFilesScheduler.queue(() => {
       this.props.dispatcher.loadChangedFilesForCurrentSelection(
         this.props.repository
       )
     })
-
-    this.setState({ selectedCommit: commit })
   }
 
   private onScroll = (start: number, end: number) => {

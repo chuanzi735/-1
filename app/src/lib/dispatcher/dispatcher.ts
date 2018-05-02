@@ -143,6 +143,13 @@ export class Dispatcher {
     return this.appStore._changeHistoryCommitSelection(repository, sha)
   }
 
+  public changeCompareCommitSelection(
+    repository: Repository,
+    sha: string
+  ): Promise<void> {
+    return this.appStore._changeCompareCommitSelection(repository, sha)
+  }
+
   /**
    * Change the selected changed file in the history view.
    *

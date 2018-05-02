@@ -432,7 +432,7 @@ export class AppStore extends TypedBaseStore<IAppState> {
         isLoadingPullRequests: false,
       },
       compareState: {
-        formState: { kind: ComparisonView.None },
+        formState: { kind: ComparisonView.None, selectedCommitSHA: null },
         commitSHAs: [],
         aheadBehindCache: new ComparisonCache(),
         allBranches: new Array<Branch>(),
@@ -796,6 +796,7 @@ export class AppStore extends TypedBaseStore<IAppState> {
       this.updateCompareState(repository, state => ({
         formState: {
           kind: ComparisonView.None,
+          selectedCommitSHA: commits.length ? commits[0] : null,
         },
         commitSHAs: commits,
       }))
@@ -808,13 +809,15 @@ export class AppStore extends TypedBaseStore<IAppState> {
       )
 
       if (compare !== null) {
+        const commits = compare.commits.map(commit => commit.sha)
         this.updateCompareState(repository, s => ({
           formState: {
             comparisonBranch,
             kind: action.mode,
+            selectedCommitSHA: commits.length ? commits[0] : null,
             aheadBehind: { ahead: compare.ahead, behind: compare.behind },
           },
-          commitSHAs: compare.commits.map(commit => commit.sha),
+          commitSHAs: commits,
         }))
 
         return this.emitUpdate()
@@ -893,6 +896,18 @@ export class AppStore extends TypedBaseStore<IAppState> {
       const diff = null
 
       return { selection, changedFiles, diff }
+    })
+    this.emitUpdate()
+  }
+
+  /** This shouldn't be called directly. See `Dispatcher`. */
+  public async _changeCompareCommitSelection(
+    repository: Repository,
+    sha: string
+  ): Promise<void> {
+    this.updateCompareState(repository, state => {
+      const newFormState = { ...state.formState, selectedCommitSHA: sha }
+      return { formState: newFormState }
     })
     this.emitUpdate()
   }

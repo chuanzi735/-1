@@ -605,6 +605,8 @@ export enum ComparisonView {
  */
 export interface IDisplayHistory {
   readonly kind: ComparisonView.None
+
+  readonly selectedCommitSHA: string | null
 }
 
 /**
@@ -620,6 +622,8 @@ export interface ICompareBranch {
 
   /** The number of commits the selected branch is ahead/behind the current branch */
   readonly aheadBehind: IAheadBehind
+
+  readonly selectedCommitSHA: string | null
 }
 
 export interface ICompareState {
