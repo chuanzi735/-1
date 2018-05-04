@@ -607,6 +607,9 @@ export interface IDisplayHistory {
   readonly kind: ComparisonView.None
 
   readonly selectedCommitSHA: string | null
+
+  /** The SHAs of commits to render in the list */
+  readonly commitSHAs: ReadonlyArray<string>
 }
 
 /**
@@ -624,14 +627,14 @@ export interface ICompareBranch {
   readonly aheadBehind: IAheadBehind
 
   readonly selectedCommitSHA: string | null
+
+  /** The SHAs of commits to render in the list */
+  readonly commitSHAs: ReadonlyArray<string>
 }
 
 export interface ICompareState {
   /** The current state of the compare form, based on user input */
   readonly formState: IDisplayHistory | ICompareBranch
-
-  /** The SHAs of commits to render in the compare list */
-  readonly commitSHAs: ReadonlyArray<string>
 
   /** A list of all branches (remote and local) currently in the repository. */
   readonly allBranches: ReadonlyArray<Branch>

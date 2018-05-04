@@ -167,8 +167,8 @@ export class CompareSidebar extends React.Component<
 
   private renderCommitList() {
     const compareState = this.props.compareState
-    const selectedCommitSHA = compareState.formState.selectedCommitSHA
-    const commitSHAs = compareState.commitSHAs
+    const { formState } = compareState
+    const { commitSHAs, selectedCommitSHA } = formState
 
     let emptyListMessage: string | JSX.Element
     if (compareState.formState.kind === ComparisonView.None) {
@@ -412,7 +412,7 @@ export class CompareSidebar extends React.Component<
       return
     }
 
-    const commits = compareState.commitSHAs
+    const commits = compareState.formState.commitSHAs
     if (commits.length - end <= CloseToBottomThreshold) {
       this.props.dispatcher.loadNextHistoryBatch(this.props.repository)
     }

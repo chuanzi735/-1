@@ -432,8 +432,7 @@ export class AppStore extends TypedBaseStore<IAppState> {
         isLoadingPullRequests: false,
       },
       compareState: {
-        formState: { kind: ComparisonView.None, selectedCommitSHA: null },
-        commitSHAs: [],
+        formState: { kind: ComparisonView.None, selectedCommitSHA: null, commitSHAs: [] },
         aheadBehindCache: new ComparisonCache(),
         allBranches: new Array<Branch>(),
         recentBranches: new Array<Branch>(),
@@ -797,8 +796,8 @@ export class AppStore extends TypedBaseStore<IAppState> {
         formState: {
           kind: ComparisonView.None,
           selectedCommitSHA: commits.length ? commits[0] : null,
+          commitSHAs: commits,
         },
-        commitSHAs: commits,
       }))
       return this.emitUpdate()
     } else if (action.kind === CompareActionKind.Branch) {
@@ -816,8 +815,8 @@ export class AppStore extends TypedBaseStore<IAppState> {
             kind: action.mode,
             selectedCommitSHA: commits.length ? commits[0] : null,
             aheadBehind: { ahead: compare.ahead, behind: compare.behind },
+            commitSHAs: commits,
           },
-          commitSHAs: commits,
         }))
 
         return this.emitUpdate()
