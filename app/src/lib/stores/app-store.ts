@@ -407,7 +407,6 @@ export class AppStore extends TypedBaseStore<IAppState> {
           file: null,
         },
         changedFiles: new Array<CommittedFileChange>(),
-        history: new Array<string>(),
         diff: null,
       },
       changesState: {
@@ -592,9 +591,16 @@ export class AppStore extends TypedBaseStore<IAppState> {
   }
 
   private onGitStoreUpdated(repository: Repository, gitStore: GitStore) {
-    this.updateHistoryState(repository, state => ({
-      history: gitStore.history,
-    }))
+    this.updateCompareState(repository, state => {
+
+      if (state.formState.kind === ComparisonView.None) {
+        return { formState: { ...state.formState, commitSHAs: gitStore.history } }
+      }
+
+      // TODO: This is a workaround for Pick<T> expecting at least one
+      // property, it's ugly and there has to be a workaround for it.
+      return { formState: state.formState }
+    })
 
     this.updateBranchesState(repository, state => ({
       tip: gitStore.tip,
@@ -672,24 +678,24 @@ export class AppStore extends TypedBaseStore<IAppState> {
     const gitStore = this.getGitStore(repository)
     await gitStore.loadHistory()
 
-    const state = this.getRepositoryState(repository).historyState
-    let newSelection = state.selection
-    const history = state.history
-    const selectedSHA = state.selection.sha
-    if (selectedSHA) {
-      const index = history.findIndex(sha => sha === selectedSHA)
-      // Our selected SHA disappeared, so clear the selection.
-      if (index < 0) {
-        newSelection = {
-          sha: null,
-          file: null,
+    const state = this.getRepositoryState(repository).compareState
+
+    if (state.formState.kind === ComparisonView.None) {
+      const { commitSHAs } = state.formState
+      let selectedSHA = state.formState.selectedCommitSHA
+      if (selectedSHA) {
+        const index = commitSHAs.findIndex(sha => sha === selectedSHA)
+        // Our selected SHA disappeared, so clear the selection.
+        if (index < 0) {
+          selectedSHA = null
         }
       }
-    }
 
-    if (!newSelection.sha && history.length > 0) {
-      this._changeHistoryCommitSelection(repository, history[0])
-      this._loadChangedFilesForCurrentSelection(repository)
+      if (selectedSHA === null && commitSHAs.length > 0) {
+        this._changeHistoryCommitSelection(repository, commitSHAs[0])
+        this._loadChangedFilesForCurrentSelection(repository)
+      }
+
     }
 
     this.emitUpdate()
@@ -788,9 +794,7 @@ export class AppStore extends TypedBaseStore<IAppState> {
 
     if (action.kind === CompareActionKind.History) {
       await gitStore.loadHistory()
-
-      const repoState = this.getRepositoryState(repository).historyState
-      const commits = repoState.history
+      const commits = gitStore.history
 
       this.updateCompareState(repository, state => ({
         formState: {

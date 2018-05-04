@@ -4,7 +4,7 @@ import { Repository } from '../../models/repository'
 import { Commit } from '../../models/commit'
 import { Dispatcher } from '../../lib/dispatcher'
 import { IGitHubUser } from '../../lib/databases'
-import { IHistoryState } from '../../lib/app-state'
+import { IDisplayHistory } from '../../lib/app-state'
 import { ThrottledScheduler } from '../lib/throttled-scheduler'
 
 /** If we're within this many rows from the bottom, load the next history batch. */
@@ -13,7 +13,7 @@ const CloseToBottomThreshold = 10
 interface IHistorySidebarProps {
   readonly repository: Repository
   readonly dispatcher: Dispatcher
-  readonly history: IHistoryState
+  readonly history: IDisplayHistory
   readonly gitHubUsers: Map<string, IGitHubUser>
   readonly emoji: Map<string, string>
   readonly commitLookup: Map<string, Commit>
@@ -40,7 +40,7 @@ export class HistorySidebar extends React.Component<IHistorySidebarProps, {}> {
   }
 
   private onScroll = (start: number, end: number) => {
-    const history = this.props.history.history
+    const history = this.props.history.commitSHAs
     if (history.length - end <= CloseToBottomThreshold) {
       this.props.dispatcher.loadNextHistoryBatch(this.props.repository)
     }
@@ -55,8 +55,8 @@ export class HistorySidebar extends React.Component<IHistorySidebarProps, {}> {
       <CommitList
         gitHubRepository={this.props.repository.gitHubRepository}
         commitLookup={this.props.commitLookup}
-        commitSHAs={this.props.history.history}
-        selectedSHA={this.props.history.selection.sha}
+        commitSHAs={this.props.history.commitSHAs}
+        selectedSHA={this.props.history.selectedCommitSHA}
         onCommitSelected={this.onCommitSelected}
         onScroll={this.onScroll}
         gitHubUsers={this.props.gitHubUsers}

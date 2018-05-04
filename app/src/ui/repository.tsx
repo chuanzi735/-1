@@ -13,6 +13,7 @@ import {
   IRepositoryState,
   RepositorySection,
   ImageDiffType,
+  ComparisonView,
 } from '../lib/app-state'
 import { Dispatcher } from '../lib/dispatcher'
 import { IssuesStore, GitHubUserStore } from '../lib/stores'
@@ -136,12 +137,19 @@ export class RepositoryView extends React.Component<
     )
   }
 
-  private renderHistorySidebar(): JSX.Element {
+  private renderHistorySidebar(): JSX.Element | null {
+
+    const formState = this.props.state.compareState.formState
+
+    if (formState.kind !== ComparisonView.None) {
+      return null
+    }
+
     return (
       <HistorySidebar
         repository={this.props.repository}
         dispatcher={this.props.dispatcher}
-        history={this.props.state.historyState}
+        history={formState}
         gitHubUsers={this.props.state.gitHubUsers}
         emoji={this.props.emoji}
         commitLookup={this.props.state.commitLookup}
@@ -173,7 +181,7 @@ export class RepositoryView extends React.Component<
     )
   }
 
-  private renderSidebarContents(): JSX.Element {
+  private renderSidebarContents(): JSX.Element | null {
     const selectedSection = this.props.state.selectedSection
 
     if (selectedSection === RepositorySection.Changes) {

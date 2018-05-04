@@ -549,9 +549,6 @@ export interface IHistorySelection {
 export interface IHistoryState {
   readonly selection: IHistorySelection
 
-  /** The ordered SHAs. */
-  readonly history: ReadonlyArray<string>
-
   readonly changedFiles: ReadonlyArray<CommittedFileChange>
 
   readonly diff: IDiff | null
