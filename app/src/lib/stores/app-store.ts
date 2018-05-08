@@ -431,7 +431,11 @@ export class AppStore extends TypedBaseStore<IAppState> {
         isLoadingPullRequests: false,
       },
       compareState: {
-        formState: { kind: ComparisonView.None, selectedCommitSHA: null, commitSHAs: [] },
+        formState: {
+          kind: ComparisonView.None,
+          selectedCommitSHA: null,
+          commitSHAs: [],
+        },
         aheadBehindCache: new ComparisonCache(),
         allBranches: new Array<Branch>(),
         recentBranches: new Array<Branch>(),
@@ -592,9 +596,10 @@ export class AppStore extends TypedBaseStore<IAppState> {
 
   private onGitStoreUpdated(repository: Repository, gitStore: GitStore) {
     this.updateCompareState(repository, state => {
-
       if (state.formState.kind === ComparisonView.None) {
-        return { formState: { ...state.formState, commitSHAs: gitStore.history } }
+        return {
+          formState: { ...state.formState, commitSHAs: gitStore.history },
+        }
       }
 
       // TODO: This is a workaround for Pick<T> expecting at least one
@@ -695,7 +700,6 @@ export class AppStore extends TypedBaseStore<IAppState> {
         this._changeHistoryCommitSelection(repository, commitSHAs[0])
         this._loadChangedFilesForCurrentSelection(repository)
       }
-
     }
 
     this.emitUpdate()

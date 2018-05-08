@@ -138,7 +138,6 @@ export class RepositoryView extends React.Component<
   }
 
   private renderHistorySidebar(): JSX.Element | null {
-
     const formState = this.props.state.compareState.formState
 
     if (formState.kind !== ComparisonView.None) {
