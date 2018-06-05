@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "strict": true,
+    "outDir": "./out-repro"
+  },
+  "include": [
+    "app/src/lib/globals.d.ts",
+    "app/src/ui/lib/author-input.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "app/node_modules",
+    "dist",
+    "out",
+    "app/src/highlighter"
+  ],
+  "compileOnSave": false
+}

@@ -38,7 +38,10 @@
     "rebuild-hard:prod": "yarn clean-slate && yarn build:prod",
     "changelog": "ts-node script/changelog/index.ts",
     "draft-release": "ts-node script/draft-release/index.ts",
-    "validate-changelog": "ts-node script/validate-changelog.ts"
+    "validate-changelog": "ts-node script/validate-changelog.ts",
+    "build:repro": "tsc -p tsconfig-repro.json",
+    "bundle:repro": "webpack --config app/webpack.repro.js",
+    "minify:repro": "uglifyjs --compress --mangle -o ./out-repro/ui/lib/author-input-after.js -- ./out-repro/ui/lib/author-input.js"
   },
   "author": {
     "name": "GitHub, Inc.",
@@ -139,6 +142,7 @@
     "electron-builder": "20.2.0",
     "electron-mocha": "^6.0.1",
     "electron-packager": "^11.0.0",
-    "electron-winstaller": "2.5.2"
+    "electron-winstaller": "2.5.2",
+    "webpack-cli": "^3.0.2"
   }
 }
