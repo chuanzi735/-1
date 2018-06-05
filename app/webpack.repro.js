@@ -2,12 +2,12 @@
 
 const path = require('path')
 const webpack = require('webpack')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
 
 module.exports = {
   mode: 'none',
   plugins: [
-    new UglifyJsPlugin(),
+    new MinifyPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
