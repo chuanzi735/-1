@@ -47,9 +47,13 @@ const electronMochaArgs = [
   '--require',
   'ts-node/register',
   '--require',
+  'source-map-support/register',
+  '--require',
   './app/test/globals.ts',
+  '--require',
+  './app/test/coverage.ts',
   'app/test/unit/*.{ts,tsx}',
-  'app/test/unit/**/*.{ts,tsx}',
+  'app/test/unit/**/*.{ts,tsx}'
 ]
 
 const shouldDebug = process.argv.indexOf('--debug') > -1

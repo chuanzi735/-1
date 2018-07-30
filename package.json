@@ -154,6 +154,24 @@
     "electron-builder": "20.19.2",
     "electron-mocha": "^6.0.1",
     "electron-packager": "^12.0.0",
-    "electron-winstaller": "2.5.2"
+    "electron-winstaller": "2.5.2",
+    "istanbul": "^0.4.5",
+    "istanbul-lib-hook": "^1.1.0",
+    "istanbul-lib-instrument": "^1.10.1",
+    "nyc": "^12.0.2",
+    "source-map-support": "^0.5.6"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "include": [
+      "app/src"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }
