@@ -79,6 +79,13 @@ class UpdateStore {
     })
   }
 
+  public async _fakeCheckForUpdates(): Promise<void> {
+    this.newRelease = await generateReleaseSummary()
+    this.status = UpdateStatus.UpdateReady
+
+    this.emitDidChange()
+  }
+
   private touchLastChecked() {
     const now = new Date()
     const persistedValue = now.getTime().toString()

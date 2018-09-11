@@ -189,10 +189,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       const status = state.status
 
       if (
-        !(
-          __RELEASE_CHANNEL__ === 'development' ||
-          __RELEASE_CHANNEL__ === 'test'
-        ) &&
+        // !(
+        //   __RELEASE_CHANNEL__ === 'development' ||
+        //   __RELEASE_CHANNEL__ === 'test'
+        // ) &&
         status === UpdateStatus.UpdateReady
       ) {
         this.props.dispatcher.setUpdateBannerVisibility(true)
@@ -251,6 +251,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     setInterval(() => this.checkForUpdates(true), UpdateCheckInterval)
     this.checkForUpdates(true)
+
+    updateStore._fakeCheckForUpdates()
 
     log.info(`launching: ${getVersion()} (${getOS()})`)
     log.info(`execPath: '${process.execPath}'`)
