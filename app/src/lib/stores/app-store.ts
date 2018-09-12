@@ -101,6 +101,7 @@ import {
   ITrailer,
   isCoAuthoredByTrailer,
   mergeTree,
+  getMergedBranches,
 } from '../git'
 
 import { launchExternalEditor } from '../editors'
@@ -2619,6 +2620,7 @@ export class AppStore extends TypedBaseStore<IAppState> {
 
     try {
       await fn()
+      await this.pruneMergedBranches(repository)
     } finally {
       this.updateRepositoryState(repository, state => ({
         isPushPullFetchInProgress: false,
@@ -2736,6 +2738,37 @@ export class AppStore extends TypedBaseStore<IAppState> {
         }
       }
     })
+  }
+
+  private async pruneMergedBranches(repository: Repository) {
+    const gitStore = this.getGitStore(repository)
+
+    if (gitStore.tip.kind !== TipState.Valid) {
+      return
+    }
+
+    const { defaultBranch } = gitStore
+
+    if (defaultBranch === null) {
+      return
+    }
+
+    const branches = await getMergedBranches(repository, defaultBranch)
+
+    // TODO: do we want to limit the number of branches we try and prune here
+    // to ensure we don't take blocking the other operation?
+
+    const { branchesState } = this.getRepositoryState(repository)
+    const { allBranches } = branchesState
+
+    for (const branchName of branches) {
+      const branch =
+        allBranches.find(b => b.nameWithoutRemote === branchName) || null
+
+      if (branch !== null) {
+        await deleteBranch(repository, branch, null, false)
+      }
+    }
   }
 
   private async fastForwardBranches(repository: Repository) {

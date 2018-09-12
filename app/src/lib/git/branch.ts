@@ -94,6 +94,22 @@ export async function deleteBranch(
   return true
 }
 
+export async function getMergedBranches(
+  repository: Repository,
+  defaultBranch: Branch
+): Promise<ReadonlyArray<string>> {
+  const result = await git(
+    ['branch', '--merged', defaultBranch.nameWithoutRemote],
+    repository.path,
+    'getMergedBranches'
+  )
+
+  // TODO: parse this output so we don't include the current branch
+  //       and accidentally try to remove it
+
+  return []
+}
+
 async function checkIfBranchExistsOnRemote(
   repository: Repository,
   branch: Branch,
