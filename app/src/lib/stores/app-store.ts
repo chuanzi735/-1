@@ -2635,7 +2635,6 @@ export class AppStore extends TypedBaseStore<IAppState> {
     })
   }
 
-  /** This shouldn't be called directly. See `Dispatcher`. */
   private async performPull(
     repository: Repository,
     account: IGitAccount | null
