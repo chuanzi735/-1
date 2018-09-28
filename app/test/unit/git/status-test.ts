@@ -135,7 +135,7 @@ describe('git/status', () => {
 
           // create a lot of files
           for (let i = 0; i < numFiles; i++) {
-            FSE.writeFileSync(
+            await FSE.writeFile(
               path.join(basePath, `test-file-${i}`),
               'Hey there\n'
             )
