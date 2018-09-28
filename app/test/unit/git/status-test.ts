@@ -134,16 +134,12 @@ describe('git/status', () => {
           await mkdir(basePath)
 
           // create a lot of files
-          const promises = []
           for (let i = 0; i < numFiles; i++) {
-            promises.push(
-              FSE.writeFile(
-                path.join(basePath, `test-file-${i}`),
-                'Hey there\n'
-              )
+            FSE.writeFileSync(
+              path.join(basePath, `test-file-${i}`),
+              'Hey there\n'
             )
           }
-          await Promise.all(promises)
 
           const status = await getStatusOrThrow(repository!)
           const files = status.workingDirectory.files
