@@ -1,3 +1,4 @@
+import { any, filter, reduce } from 'ramda'
 import { spawnAndComplete } from './spawn'
 import { getFilesWithConflictMarkers } from './diff-check'
 import {
@@ -125,20 +126,22 @@ export async function getStatus(
 
   const stdout = result.output.toString('utf8')
   const parsed = parsePorcelainStatus(stdout)
-  const headers: ReadonlyArray<IStatusHeader> = parsed.filter(isStatusHeader)
-  const entries: ReadonlyArray<IStatusEntry> = parsed.filter(isStatusEntry)
+  const headers = <ReadonlyArray<IStatusHeader>>filter(isStatusHeader, parsed)
+  const entries = <ReadonlyArray<IStatusEntry>>filter(isStatusEntry, parsed)
 
   // run git diff check if anything is conflicted
-  const filesWithConflictMarkers = entries.some(
-    es => mapStatus(es.statusCode).kind === 'conflicted'
+  const filesWithConflictMarkers = any(
+    es => mapStatus(es.statusCode).kind === 'conflicted',
+    entries
   )
     ? await getFilesWithConflictMarkers(repository.path)
     : new Set<string>()
 
   // Map of files keyed on their paths.
-  const files = entries.reduce(
+  const files = reduce(
     (files, entry) => buildStatusMap(files, entry, filesWithConflictMarkers),
-    new Map<string, WorkingDirectoryFileChange>()
+    new Map<string, WorkingDirectoryFileChange>(),
+    entries
   )
 
   const {
@@ -146,13 +149,17 @@ export async function getStatus(
     currentUpstreamBranch,
     currentTip,
     branchAheadBehind,
-  }: StatusHeadersData = headers.reduce(parseStatusHeader, {
-    currentBranch: undefined,
-    currentUpstreamBranch: undefined,
-    currentTip: undefined,
-    branchAheadBehind: undefined,
-    match: null,
-  })
+  }: StatusHeadersData = reduce(
+    parseStatusHeader,
+    {
+      currentBranch: undefined,
+      currentUpstreamBranch: undefined,
+      currentTip: undefined,
+      branchAheadBehind: undefined,
+      match: null,
+    },
+    headers
+  )
 
   const workingDirectory = WorkingDirectoryStatus.fromFiles([...files.values()])
 
