@@ -1,4 +1,4 @@
-import { any, filter, reduce } from 'ramda'
+import { any, cond, filter, reduce, T } from 'ramda'
 import { spawnAndComplete } from './spawn'
 import { getFilesWithConflictMarkers } from './diff-check'
 import {
@@ -7,6 +7,14 @@ import {
   AppFileStatus,
   FileEntry,
   GitStatusEntry,
+  OrdinaryEntry,
+  isOrdinaryEntry,
+  RenamedOrCopiedEntry,
+  isRenamedOrCopiedEntry,
+  UntrackedEntry,
+  isUntrackedEntry,
+  UnmergedEntry,
+  isUnmergedEntry,
 } from '../../models/status'
 import {
   parsePorcelainStatus,
@@ -56,29 +64,33 @@ function convertToAppStatus(
   status: FileEntry,
   hasConflictMarkers: boolean
 ): AppFileStatus {
-  if (status.kind === 'ordinary') {
-    switch (status.type) {
-      case 'added':
-        return AppFileStatus.New
-      case 'modified':
-        return AppFileStatus.Modified
-      case 'deleted':
-        return AppFileStatus.Deleted
-    }
-  } else if (status.kind === 'copied') {
-    return AppFileStatus.Copied
-  } else if (status.kind === 'renamed') {
-    return AppFileStatus.Renamed
-  } else if (status.kind === 'conflicted') {
-    return hasConflictMarkers
-      ? AppFileStatus.Conflicted
-      : AppFileStatus.Resolved
-  } else if (status.kind === 'untracked') {
-    return AppFileStatus.New
-  }
-
-  return fatalError(`Unknown file status ${status}`)
+  return <AppFileStatus>(
+    cond([
+      [isOrdinaryEntry, ordinaryStatusCond],
+      [isRenamedOrCopiedEntry, renamedOrCopiedCond],
+      [
+        isUnmergedEntry,
+        () =>
+          hasConflictMarkers
+            ? AppFileStatus.Conflicted
+            : AppFileStatus.Resolved,
+      ],
+      [isUntrackedEntry, () => AppFileStatus.New],
+      [T, () => fatalError(`Unknown file status ${status}`)],
+    ])(status)
+  )
 }
+
+const ordinaryStatusCond = cond<OrdinaryEntry, AppFileStatus>([
+  [status => status.type === 'added', () => AppFileStatus.New],
+  [status => status.type === 'modified', () => AppFileStatus.Modified],
+  [status => status.type === 'deleted', () => AppFileStatus.Deleted],
+])
+
+const renamedOrCopiedCond = cond<RenamedOrCopiedEntry, AppFileStatus>([
+  [status => status.kind === 'renamed', () => AppFileStatus.Renamed],
+  [status => status.kind === 'copied', () => AppFileStatus.Copied],
+])
 
 /**
  *  Retrieve the status for a given repository,

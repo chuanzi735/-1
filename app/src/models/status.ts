@@ -42,7 +42,7 @@ export enum AppFileStatus {
 }
 
 /** The porcelain status for an ordinary changed entry */
-type OrdinaryEntry = {
+export type OrdinaryEntry = {
   readonly kind: 'ordinary'
   /** how we should represent the file in the application */
   readonly type: 'added' | 'modified' | 'deleted'
@@ -52,8 +52,14 @@ type OrdinaryEntry = {
   readonly workingTree?: GitStatusEntry
 }
 
+export function isOrdinaryEntry(
+  fileEntry: FileEntry
+): fileEntry is OrdinaryEntry {
+  return fileEntry.kind === 'ordinary'
+}
+
 /** The porcelain status for a renamed or copied entry */
-type RenamedOrCopiedEntry = {
+export type RenamedOrCopiedEntry = {
   readonly kind: 'renamed' | 'copied'
   /** the status of the index for this entry (if known) */
   readonly index?: GitStatusEntry
@@ -61,8 +67,14 @@ type RenamedOrCopiedEntry = {
   readonly workingTree?: GitStatusEntry
 }
 
+export function isRenamedOrCopiedEntry(
+  fileEntry: FileEntry
+): fileEntry is RenamedOrCopiedEntry {
+  return fileEntry.kind === 'renamed' || fileEntry.kind === 'copied'
+}
+
 /** The porcelain status for an unmerged entry */
-type UnmergedEntry = {
+export type UnmergedEntry = {
   readonly kind: 'conflicted'
   /** the first character of the short code ("ours")  */
   readonly us: GitStatusEntry
@@ -70,9 +82,21 @@ type UnmergedEntry = {
   readonly them: GitStatusEntry
 }
 
+export function isUnmergedEntry(
+  fileEntry: FileEntry
+): fileEntry is UnmergedEntry {
+  return fileEntry.kind === 'conflicted'
+}
+
 /** The porcelain status for an unmerged entry */
-type UntrackedEntry = {
+export type UntrackedEntry = {
   readonly kind: 'untracked'
+}
+
+export function isUntrackedEntry(
+  fileEntry: FileEntry
+): fileEntry is UntrackedEntry {
+  return fileEntry.kind === 'untracked'
 }
 
 /** The union of possible entries from the git status */
